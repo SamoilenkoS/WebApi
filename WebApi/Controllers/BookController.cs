@@ -2,12 +2,12 @@
 //     Copyright (c) My company". All rights reserved.
 // </copyright>
 
-namespace WebApi.Controllers
+namespace WebLib.Controllers
 {
     using System.Collections.Generic;
     using Microsoft.AspNetCore.Mvc;
-    using WebApi.BookService;
-    using WebApi.Models;
+    using WebLib.BookService;
+    using WebLib.Models;
 
     /// <summary>
     /// Book controller
@@ -19,7 +19,7 @@ namespace WebApi.Controllers
         /// <summary>
         /// IBook interface link
         /// </summary>
-        private IBook books;
+        private readonly IBook books;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BookController"/> class
@@ -35,7 +35,7 @@ namespace WebApi.Controllers
         /// </summary>
         /// <returns>List of books</returns>
         [HttpGet]
-        public ActionResult<IEnumerable<Book>> GetAllBooks()
+        public IActionResult GetAllBooks()
         {
             List<Book> booksList = this.books.GetAllBooks();
             if (booksList.Count != 0)

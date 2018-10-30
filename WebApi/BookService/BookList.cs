@@ -2,11 +2,11 @@
 //     Copyright (c) My company". All rights reserved.
 // </copyright>
 
-namespace WebApi.BookService
+namespace WebLib.BookService
 {
     using System.Collections.Generic;
     using System.Linq;
-    using WebApi.Models;
+    using WebLib.Models;
 
     /// <summary>
     /// Implementation of IBook
@@ -16,7 +16,7 @@ namespace WebApi.BookService
         /// <summary>
         /// List of books
         /// </summary>
-        private List<Book> books;
+        private readonly List<Book> books;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BookList"/> class

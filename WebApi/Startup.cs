@@ -2,14 +2,14 @@
 //     Copyright (c) My company". All rights reserved.
 // </copyright>
 
-namespace WebApi
+namespace WebLib
 {
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using WebApi.BookService;
+    using WebLib.BookService;
 
     /// <summary>
     /// Startup config class

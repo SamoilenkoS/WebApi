@@ -2,7 +2,7 @@
 //     Copyright (c) My company". All rights reserved.
 // </copyright>
 
-namespace WebApi
+namespace WebLib
 {
     using Microsoft.AspNetCore;
     using Microsoft.AspNetCore.Hosting;

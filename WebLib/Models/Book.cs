@@ -2,7 +2,7 @@
 //     Copyright (c) My company". All rights reserved.
 // </copyright>
 
-namespace WebApi.Models
+namespace WebLib.Models
 {
     /// <summary>
     /// Model of book for UI and Back
