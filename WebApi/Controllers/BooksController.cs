@@ -8,7 +8,7 @@ namespace WebApi.Controllers
     using System.Linq;
     using Microsoft.AspNetCore.Mvc;
     using WebApi.BookService;
-    using WebApi.Models;
+    using WebLib.Models;
 
     /// <summary>
     /// Book controller

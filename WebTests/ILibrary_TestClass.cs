@@ -8,8 +8,8 @@ namespace WebTests
     using System.Linq;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using WebApi.BookService;
-    using WebApi.Models;
     using WebLib;
+    using WebLib.Models;
 
     /// <summary>
     /// ILibrary test class
@@ -20,7 +20,7 @@ namespace WebTests
         /// <summary>
         /// ILibrary object
         /// </summary>
-        private ILibrary libraryObject;
+        private readonly ILibrary libraryObject;
 
         private static IDataProvider dataProvider;
 

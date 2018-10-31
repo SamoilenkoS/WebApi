@@ -2,7 +2,7 @@
 //     Copyright (c) My company". All rights reserved.
 // </copyright>
 
-namespace WebApi.Models
+namespace WebLib.Models
 {
     using System;
     using System.ComponentModel.DataAnnotations;
@@ -36,13 +36,13 @@ namespace WebApi.Models
             this.Surname = surname;
             this.Name = name;
             this.Patronymic = patronymic;
-            this.AuthorID = authorIDCount++;
+            this.Id = authorIDCount++;
         }
 
         /// <summary>
         /// Gets author id
         /// </summary>
-        public int AuthorID
+        public int Id
         {
             get;
             private set;
@@ -51,7 +51,7 @@ namespace WebApi.Models
         /// <summary>
         /// Gets surname of author
         /// </summary>
-        [Required(ErrorMessage = "Every author has surname name!")]
+        [StringLength(100, MinimumLength = 1, ErrorMessage = "Every author has surname name!")]
         public string Surname
         {
             get;
@@ -61,7 +61,7 @@ namespace WebApi.Models
         /// <summary>
         /// Gets name of author
         /// </summary>
-        [Required(ErrorMessage = "Every author has name!")]
+        [StringLength(100, MinimumLength = 1, ErrorMessage = "Every author has name!")]
         public string Name
         {
             get;

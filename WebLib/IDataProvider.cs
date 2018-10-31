@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using WebApi.Models;
+using WebLib.Models;
 
 namespace WebLib
 {
@@ -9,5 +9,8 @@ namespace WebLib
     {
         IEnumerable<Book> GetBooks();
         IEnumerable<Author> GetAuthors();
+        IEnumerable<Genre> GetGenres();
+        IEnumerable<KeyValuePair<Book, Genre>> GetBooksGenres();
+        IEnumerable<KeyValuePair<Book, Author>> GetBooksAuthors();
     }
 }

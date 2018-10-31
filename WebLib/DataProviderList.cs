@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using WebApi.Models;
+using WebLib.Models;
 
 namespace WebLib
 {
@@ -36,6 +36,42 @@ namespace WebLib
             foreach (Book book in books)
             {
                 yield return book;
+            }
+        }
+
+        public IEnumerable<KeyValuePair<Book, Genre>> GetBooksGenres()
+        {
+            Dictionary<Book, Genre> booksGenre = new Dictionary<Book, Genre>()
+            {
+
+            };
+            foreach (var bookGenre in booksGenre)
+            {
+                yield return bookGenre;
+            }
+        }
+
+        public IEnumerable<KeyValuePair<Book, Author>> GetBooksAuthors()
+        {
+            Dictionary<Book, Author> booksAuthor = new Dictionary<Book, Author>()
+            {
+
+            };
+            foreach (var bookGenre in booksAuthor)
+            {
+                yield return bookGenre;
+            }
+        }
+
+        public IEnumerable<Genre> GetGenres()
+        {
+            List<Genre> genres = new List<Genre>()
+            {
+
+            };
+            foreach (Genre genre in genres)
+            {
+                yield return genre;
             }
         }
     }

@@ -6,8 +6,8 @@ namespace WebApi.BookService
 {
     using System.Collections.Generic;
     using System.Linq;
-    using WebApi.Models;
     using WebLib;
+    using WebLib.Models;
 
     /// <summary>
     /// Implementation of IBook
@@ -24,6 +24,18 @@ namespace WebApi.BookService
         /// </summary>
         private readonly List<Author> authors;
 
+        private readonly List<Genre> genres;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private readonly Dictionary<Book, Genre> booksGenres;
+
+        /// <summary>
+        /// List of book->author pairs
+        /// </summary>
+        private readonly Dictionary<Book, Author> booksAuthors;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="LibraryList"/> class
         /// </summary>
@@ -31,6 +43,9 @@ namespace WebApi.BookService
         {
             this.authors = dataProvider.GetAuthors().ToList();
             this.books = dataProvider.GetBooks().ToList();
+            this.genres = dataProvider.GetGenres().ToList();
+            this.booksGenres = dataProvider.GetBooksGenres().ToDictionary(x => x.Key, x => x.Value);
+            this.booksAuthors = dataProvider.GetBooksAuthors().ToDictionary(x => x.Key, x => x.Value);
         }
 
         /// <summary>
@@ -41,7 +56,7 @@ namespace WebApi.BookService
         public int AddAuthor(Author author)
         {
             this.authors.Add(author);
-            return author.AuthorID;
+            return author.Id;
         }
 
         /// <summary>
@@ -51,7 +66,7 @@ namespace WebApi.BookService
         /// <returns>Book id</returns>
         public int AddBook(Book book)
         {
-            Author bookAuthor = this.authors.FirstOrDefault(author => author.AuthorID == book.AuthorId);
+            Author bookAuthor = this.authors.FirstOrDefault(author => author.Id == book.AuthorId);
             if (bookAuthor == null)
             {
                 book.AuthorId = null;
@@ -59,6 +74,12 @@ namespace WebApi.BookService
 
             this.books.Add(book);
             return book.Id;
+        }
+
+        public int AddGenre(Genre genre)
+        {
+            this.genres.Add(genre);
+            return genre.Id;
         }
 
         /// <summary>
@@ -79,6 +100,11 @@ namespace WebApi.BookService
             return this.books;
         }
 
+        public IEnumerable<Genre> GetAllGenres()
+        {
+            return this.genres;
+        }
+
         /// <summary>
         /// Getting author books
         /// </summary>
@@ -97,7 +123,7 @@ namespace WebApi.BookService
         /// <returns>Author object</returns>
         public Author GetAuthorById(int id)
         {
-            return this.authors.FirstOrDefault(author => author.AuthorID == id);
+            return this.authors.FirstOrDefault(author => author.Id == id);
         }
 
         /// <summary>
@@ -111,6 +137,26 @@ namespace WebApi.BookService
             return resultBook;
         }
 
+        public IEnumerable<Book> GetBooksByGenre(int genreId)
+        {
+            Genre genre = this.genres.FirstOrDefault(currentGenre => currentGenre.Id == genreId);
+            if (genre != null)
+            {
+                List<Book> booksWithGenre = 
+                    (from bookGenrePair in this.booksGenres
+                     where bookGenrePair.Value.Id == genreId
+                     select bookGenrePair.Key).ToList();
+                return booksWithGenre;
+            }
+            return null;
+        }
+
+        public Genre GetGenreById(int genreId)
+        {
+            Genre genre = this.genres.FirstOrDefault(currentGenre => currentGenre.Id == genreId);
+            return genre;
+        }
+
         /// <summary>
         /// Removing author
         /// </summary>
@@ -118,7 +164,7 @@ namespace WebApi.BookService
         /// <returns>True if successfully removed</returns>
         public bool RemoveAuthor(int id)
         {
-            Author authorToRemove = this.authors.FirstOrDefault(author => author.AuthorID == id);
+            Author authorToRemove = this.authors.FirstOrDefault(author => author.Id == id);
             bool result = false;
             if (authorToRemove != null)
             {
@@ -148,6 +194,22 @@ namespace WebApi.BookService
             return result;
         }
 
+        public bool RemoveGenre(int genreId)
+        {
+            Genre genre = this.genres.FirstOrDefault(currentGenre => currentGenre.Id == genreId);
+            bool result = false;
+            if (genre != null)
+            {
+                if (GetBooksByGenre(genreId).ToList().Count == 0)
+                {
+                    this.genres.Remove(genre);
+                    result = true;
+                }
+            }
+
+            return result;
+        }
+
         /// <summary>
         /// Updating author with id using data from author object from params
         /// </summary>
@@ -156,7 +218,7 @@ namespace WebApi.BookService
         /// <returns>True if successfull updated</returns>
         public bool UpdateAuthor(int id, Author author)
         {
-            Author authorToUpdate = this.authors.FirstOrDefault(AUTHOR => AUTHOR.AuthorID == id);
+            Author authorToUpdate = this.authors.FirstOrDefault(AUTHOR => AUTHOR.Id == id);
             bool result = false;
             if (authorToUpdate != null)
             {
@@ -195,7 +257,7 @@ namespace WebApi.BookService
         public bool UpdateBooksAuthor(int bookId, int authorId)
         {
             Book bookToUpdate = this.books.FirstOrDefault(book => book.Id == bookId);
-            Author author = this.authors.FirstOrDefault(currentAuthor => currentAuthor.AuthorID == authorId);
+            Author author = this.authors.FirstOrDefault(currentAuthor => currentAuthor.Id == authorId);
             bool result = false;
             if (bookToUpdate != null)
             {

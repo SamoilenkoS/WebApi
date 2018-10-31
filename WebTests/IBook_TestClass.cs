@@ -8,8 +8,8 @@ namespace WebTests
     using System.Linq;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using WebApi.BookService;
-    using WebApi.Models;
     using WebLib;
+    using WebLib.Models;
 
     /// <summary>
     /// IBook test class
@@ -21,7 +21,7 @@ namespace WebTests
         /// IBook object
         /// </summary>
         private IBook booksObject;
-        private static IDataProvider dataProvider;
+        private static readonly IDataProvider dataProvider;
 
         static IBook_TestClass()
         {

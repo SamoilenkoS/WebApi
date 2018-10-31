@@ -5,7 +5,7 @@
 namespace WebApi.BookService
 {
     using System.Collections.Generic;
-    using WebApi.Models;
+    using WebLib.Models;
 
     /// <summary>
     /// CRUD methods for book

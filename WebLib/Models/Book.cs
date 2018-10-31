@@ -2,7 +2,7 @@
 //     Copyright (c) My company". All rights reserved.
 // </copyright>
 
-namespace WebApi.Models
+namespace WebLib.Models
 {
     using System;
     using System.ComponentModel.DataAnnotations;
@@ -58,7 +58,7 @@ namespace WebApi.Models
         /// <summary>
         /// Gets title of book
         /// </summary>
-        [Required(ErrorMessage = "Every book has title!")]
+        [StringLength(100, MinimumLength = 2, ErrorMessage = "Every book has title!")]
         public string Title
         {
             get;
