@@ -4,6 +4,7 @@
 
 namespace WebApi.Models
 {
+    using System;
     using System.ComponentModel.DataAnnotations;
 
     /// <summary>
@@ -21,7 +22,7 @@ namespace WebApi.Models
         /// </summary>
         static Book()
         {
-            idCount = 0;
+            idCount = 1;
         }
 
         /// <summary>
@@ -92,6 +93,11 @@ namespace WebApi.Models
             }
 
             return result;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(AuthorId, Title);
         }
     }
 }

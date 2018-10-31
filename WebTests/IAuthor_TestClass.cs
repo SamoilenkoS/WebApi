@@ -9,6 +9,7 @@ namespace WebTests
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using WebApi.BookService;
     using WebApi.Models;
+    using WebLib;
 
     /// <summary>
     /// IAuthor test class
@@ -21,13 +22,19 @@ namespace WebTests
         /// </summary>
         private IAuthor authorsObject;
 
+        private static IDataProvider dataProvider;
+
+        static IAuthor_TestClass()
+        {
+            dataProvider = new DataProviderList();
+        }
         /// <summary>
         /// Test initialize method
         /// </summary>
         [TestInitialize]
         public void TestClassInitialize()
         {
-            this.authorsObject = new LibraryList();
+            this.authorsObject = new LibraryList(dataProvider);
         }
 
         /// <summary>
@@ -70,7 +77,7 @@ namespace WebTests
         public void GetById_Correct()
         {
             // Arrange
-            int authorId = 0;
+            int authorId = 1;
             Author expected = new Author("SurnameA", "NameA", "PatronymicA");
 
             // Act
@@ -103,7 +110,7 @@ namespace WebTests
         {
             // Arrange
             Author authorForUpdate = new Author("Hello", "Hello", "Hello");
-            int idForUpdate = 0;
+            int idForUpdate = 1;
 
             // Act
             this.authorsObject.UpdateAuthor(idForUpdate, authorForUpdate);
@@ -134,7 +141,7 @@ namespace WebTests
         public void Delete_IdCorrect()
         {
             // Arrange
-            int idForDelete = 0;
+            int idForDelete = 1;
 
             // Act
             this.authorsObject.RemoveAuthor(idForDelete);

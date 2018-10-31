@@ -14,7 +14,7 @@ namespace WebApi.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthorController : ControllerBase
+    public class AuthorsController : ControllerBase
     {
         /// <summary>
         /// ILibrary interface link
@@ -22,10 +22,10 @@ namespace WebApi.Controllers
         private readonly ILibrary library;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AuthorController"/> class
+        /// Initializes a new instance of the <see cref="AuthorsController"/> class
         /// </summary>
         /// <param name="library">IBook interface link</param>
-        public AuthorController(ILibrary library)
+        public AuthorsController(ILibrary library)
         {
             this.library = library;
         }

@@ -4,6 +4,7 @@
 
 namespace WebApi.Models
 {
+    using System;
     using System.ComponentModel.DataAnnotations;
 
     /// <summary>
@@ -21,7 +22,7 @@ namespace WebApi.Models
         /// </summary>
         static Author()
         {
-            authorIDCount = 0;
+            authorIDCount = 1;
         }
 
         /// <summary>
@@ -105,6 +106,11 @@ namespace WebApi.Models
             }
 
             return result;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Surname, Name, Patronymic);
         }
     }
 }

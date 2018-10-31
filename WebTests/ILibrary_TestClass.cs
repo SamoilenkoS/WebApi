@@ -9,6 +9,7 @@ namespace WebTests
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using WebApi.BookService;
     using WebApi.Models;
+    using WebLib;
 
     /// <summary>
     /// ILibrary test class
@@ -21,12 +22,19 @@ namespace WebTests
         /// </summary>
         private ILibrary libraryObject;
 
+        private static IDataProvider dataProvider;
+
+        static ILibrary_TestClass()
+        {
+            dataProvider = new DataProviderList();
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ILibrary_TestClass"/> class
         /// </summary>
         public ILibrary_TestClass()
         {
-            this.libraryObject = new LibraryList();
+            this.libraryObject = new LibraryList(dataProvider);
         }
 
         /// <summary>
@@ -36,15 +44,15 @@ namespace WebTests
         public void UpdateBookAuthor_IdsCorrect()
         {
             // Arrange
-            int bookId = 0;
+            int bookId = 1;
             int? newId = 2;
 
             // Act
-            bool updatdeSuccessfully = this.libraryObject.UpdateBooksAuthor(bookId, (int)newId);
+            bool updatedSuccessfully = this.libraryObject.UpdateBooksAuthor(bookId, (int)newId);
             int? actual = this.libraryObject.GetBookById(bookId).AuthorId;
 
             // Assert
-            Assert.IsTrue(updatdeSuccessfully);
+            Assert.IsTrue(updatedSuccessfully);
             Assert.AreEqual(newId, actual);
         }
 
@@ -58,10 +66,10 @@ namespace WebTests
             int incorrectId = -1;
 
             // Act
-            bool updatdeSuccessfully = this.libraryObject.UpdateBooksAuthor(incorrectId, incorrectId);
+            bool updatedSuccessfully = this.libraryObject.UpdateBooksAuthor(incorrectId, incorrectId);
 
             // Assert
-            Assert.IsFalse(updatdeSuccessfully);
+            Assert.IsFalse(updatedSuccessfully);
         }
 
         /// <summary>
@@ -71,7 +79,7 @@ namespace WebTests
         public void GetAuthorsBook()
         {
             // Arrange
-            int authorId = 1;
+            int authorId = 3;
             List<Book> expected = (from book in this.GetDefaultBooksList().ToList()
                                    where book.AuthorId == authorId
                                    select book).ToList();
@@ -105,12 +113,12 @@ namespace WebTests
         {
             return new List<Book>()
             {
-                new Book("First book", 0),
-                new Book("Second book", 1),
-                new Book("Third book", 2),
-                new Book("Fourth book", 0),
-                new Book("Fifth book", 1),
-                new Book("Sixth book", 2)
+                new Book("First book", 1),
+                new Book("Second book", 2),
+                new Book("Third book", 3),
+                new Book("Fourth book", 1),
+                new Book("Fifth book", 2),
+                new Book("Sixth book", 3)
             };
         }
     }

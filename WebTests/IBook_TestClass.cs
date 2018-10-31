@@ -9,6 +9,7 @@ namespace WebTests
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using WebApi.BookService;
     using WebApi.Models;
+    using WebLib;
 
     /// <summary>
     /// IBook test class
@@ -20,14 +21,19 @@ namespace WebTests
         /// IBook object
         /// </summary>
         private IBook booksObject;
+        private static IDataProvider dataProvider;
 
+        static IBook_TestClass()
+        {
+            dataProvider = new DataProviderList();
+        }
         /// <summary>
         /// Test initialize method
         /// </summary>
         [TestInitialize]
         public void TestClassInitialize()
         {
-            this.booksObject = new LibraryList();
+            this.booksObject = new LibraryList(dataProvider);
         }
 
         /// <summary>
@@ -87,8 +93,8 @@ namespace WebTests
         public void GetById_Correct()
         {
             // Arrange
-            int bookId = 1;
-            int authorId = 1;
+            int bookId = 2;
+            int authorId = 2;
             Book expected = new Book("Second book", authorId);
 
             // Act
@@ -121,7 +127,7 @@ namespace WebTests
         {
             // Arrange
             Book bookForUpdate = new Book("New title", 1);
-            int idForUpdate = 0;
+            int idForUpdate = 1;
 
             // Act
             this.booksObject.UpdateBook(idForUpdate, bookForUpdate);
@@ -155,7 +161,7 @@ namespace WebTests
         public void Delete_IdCorrect()
         {
             // Arrange
-            int idForDelete = 0;
+            int idForDelete = 1;
 
             // Act
             this.booksObject.RemoveBook(idForDelete);
@@ -187,12 +193,12 @@ namespace WebTests
         {
             return new List<Book>()
             {
-                new Book("First book", 0),
-                new Book("Second book", 1),
-                new Book("Third book", 2),
-                new Book("Fourth book", 0),
-                new Book("Fifth book", 1),
-                new Book("Sixth book", 2)
+                new Book("First book", 1),
+                new Book("Second book", 2),
+                new Book("Third book", 3),
+                new Book("Fourth book", 1),
+                new Book("Fifth book", 2),
+                new Book("Sixth book", 3)
             };
         }
     }

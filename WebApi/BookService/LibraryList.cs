@@ -7,6 +7,7 @@ namespace WebApi.BookService
     using System.Collections.Generic;
     using System.Linq;
     using WebApi.Models;
+    using WebLib;
 
     /// <summary>
     /// Implementation of IBook
@@ -26,23 +27,10 @@ namespace WebApi.BookService
         /// <summary>
         /// Initializes a new instance of the <see cref="LibraryList"/> class
         /// </summary>
-        public LibraryList()
+        public LibraryList(IDataProvider dataProvider)
         {
-            this.authors = new List<Author>()
-            {
-                new Author("SurnameA", "NameA", "PatronymicA"),
-                new Author("SurnameB", "NameB", "PatronymicB"),
-                new Author("SurnameC", "NameC", "PatronymicC")
-            };
-            this.books = new List<Book>()
-            {
-                new Book("First book", 0),
-                new Book("Second book", 1),
-                new Book("Third book", 2),
-                new Book("Fourth book", 0),
-                new Book("Fifth book", 1),
-                new Book("Sixth book", 2)
-            };
+            this.authors = dataProvider.GetAuthors().ToList();
+            this.books = dataProvider.GetBooks().ToList();
         }
 
         /// <summary>
@@ -92,7 +80,7 @@ namespace WebApi.BookService
         }
 
         /// <summary>
-        /// Getting author bookss
+        /// Getting author books
         /// </summary>
         /// <param name="authorId">Author id</param>
         /// <returns>List of books of author</returns>
