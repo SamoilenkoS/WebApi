@@ -2,12 +2,13 @@
 //     Copyright (c) My company". All rights reserved.
 // </copyright>
 
-namespace WebLib.Controllers
+namespace WebApi.Controllers
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Microsoft.AspNetCore.Mvc;
-    using WebLib.BookService;
-    using WebLib.Models;
+    using WebApi.BookService;
+    using WebApi.Models;
 
     /// <summary>
     /// Book controller
@@ -19,15 +20,27 @@ namespace WebLib.Controllers
         /// <summary>
         /// IBook interface link
         /// </summary>
-        private readonly IBook books;
+        private readonly ILibrary library;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BookController"/> class
         /// </summary>
-        /// <param name="books">IBook interface link</param>
-        public BookController(IBook books)
+        /// <param name="library">IBook interface link</param>
+        public BookController(ILibrary library)
         {
-            this.books = books;
+            this.library = library;
+        }
+
+        /// <summary>
+        /// Adding book
+        /// </summary>
+        /// <param name="book">Book to add</param>
+        /// <returns>Added book</returns>
+        [HttpPost]
+        public IActionResult AddBook([FromBody] Book book)
+        {
+            this.library.AddBook(book);
+            return this.Created("books", book);
         }
 
         /// <summary>
@@ -37,7 +50,7 @@ namespace WebLib.Controllers
         [HttpGet]
         public IActionResult GetAllBooks()
         {
-            List<Book> booksList = this.books.GetAllBooks();
+            List<Book> booksList = this.library.GetAllBooks().ToList();
             if (booksList.Count != 0)
             {
                 return this.Ok(booksList);
@@ -56,25 +69,13 @@ namespace WebLib.Controllers
         [HttpGet("{id}")]
         public IActionResult GetBookById(int id)
         {
-            Book resultBook = this.books.GetBookById(id);
+            Book resultBook = this.library.GetBookById(id);
             if (resultBook == null)
             {
                 return this.NotFound();
             }
 
             return this.Ok(resultBook);
-        }
-        
-        /// <summary>
-        /// Adding book
-        /// </summary>
-        /// <param name="book">Book to add</param>
-        /// <returns>Added book</returns>
-        [HttpPost]
-        public IActionResult AddBook([FromBody] Book book)
-        {
-            this.books.AddBook(book);
-            return this.Created("books", book);
         }
 
         /// <summary>
@@ -86,7 +87,7 @@ namespace WebLib.Controllers
         [HttpPut("{id}")]
         public IActionResult UpdateBook(int id, [FromBody] Book book)
         {
-            if (this.books.UpdateBook(id, book))
+            if (this.library.UpdateBook(id, book))
             {
                 return this.Ok(book);
             }
@@ -97,6 +98,23 @@ namespace WebLib.Controllers
         }
 
         /// <summary>
+        /// Upating book author
+        /// </summary>
+        /// <param name="book_id">Book id</param>
+        /// <param name="author_id">Author id</param>
+        /// <returns>Status of update</returns>
+        [HttpPut("{book_id}/{author_id}")]
+        public IActionResult UpdateBookAuthor(int book_id, int author_id)
+        {
+            if (this.library.UpdateBooksAuthor(book_id, author_id))
+            {
+                return this.Ok(this.library.GetBookById(book_id));
+            }
+
+            return this.NotFound("Book or author wasn`t found!");
+        }
+
+        /// <summary>
         /// Deleting book by id
         /// </summary>
         /// <param name="id">Id of book</param>
@@ -104,7 +122,7 @@ namespace WebLib.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            if (this.books.RemoveBook(id))
+            if (this.library.RemoveBook(id))
             {
                 return this.Ok();
             }

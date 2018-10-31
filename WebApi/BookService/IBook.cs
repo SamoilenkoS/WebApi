@@ -2,10 +2,10 @@
 //     Copyright (c) My company". All rights reserved.
 // </copyright>
 
-namespace WebLib.BookService
+namespace WebApi.BookService
 {
     using System.Collections.Generic;
-    using WebLib.Models;
+    using WebApi.Models;
 
     /// <summary>
     /// CRUD methods for book
@@ -16,7 +16,7 @@ namespace WebLib.BookService
         /// Get all books
         /// </summary>
         /// <returns>List of books</returns>
-        List<Book> GetAllBooks();
+        IEnumerable<Book> GetAllBooks();
 
         /// <summary>
         /// Getting book by id

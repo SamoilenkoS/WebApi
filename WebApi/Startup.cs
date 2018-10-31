@@ -2,14 +2,14 @@
 //     Copyright (c) My company". All rights reserved.
 // </copyright>
 
-namespace WebLib
+namespace WebApi
 {
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using WebLib.BookService;
+    using WebApi.BookService;
 
     /// <summary>
     /// Startup config class
@@ -36,7 +36,7 @@ namespace WebLib
         /// <param name="services">Services collection</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IBook, BookList>();
+            services.AddSingleton<ILibrary, LibraryList>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 

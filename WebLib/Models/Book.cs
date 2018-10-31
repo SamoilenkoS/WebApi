@@ -2,8 +2,10 @@
 //     Copyright (c) My company". All rights reserved.
 // </copyright>
 
-namespace WebLib.Models
+namespace WebApi.Models
 {
+    using System.ComponentModel.DataAnnotations;
+
     /// <summary>
     /// Model of book for UI and Back
     /// </summary>
@@ -26,10 +28,12 @@ namespace WebLib.Models
         /// Initializes a new instance of the <see cref="Book"/> class
         /// </summary>
         /// <param name="title">Title of book</param>
-        public Book(string title)
+        /// <param name="authorId">Author id(may be empty)</param>
+        public Book(string title, int? authorId = null)
         {
             this.Id = idCount++;
             this.Title = title;
+            this.AuthorId = authorId;
         }
 
         /// <summary>
@@ -42,12 +46,52 @@ namespace WebLib.Models
         }
 
         /// <summary>
-        /// Gets or sets title of book
+        /// Gets or sets author id
         /// </summary>
-        public string Title
+        public int? AuthorId
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// Gets title of book
+        /// </summary>
+        [Required(ErrorMessage = "Every book has title!")]
+        public string Title
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Cloning of book for leaving id correct
+        /// </summary>
+        /// <param name="book">New info of book</param>
+        public void Clone(Book book)
+        {
+            this.Title = book.Title;
+            this.AuthorId = book.AuthorId;
+        }
+
+        /// <summary>
+        /// Equals override for compare ignoring bookId
+        /// </summary>
+        /// <param name="book">Book to compare</param>
+        /// <returns>True if title and authorId are the same</returns>
+        public override bool Equals(object book)
+        {
+            bool result = false;
+            if (book is Book)
+            {
+                Book bookToCheckEquals = book as Book;
+                if (this.AuthorId == bookToCheckEquals.AuthorId && this.Title == bookToCheckEquals.Title)
+                {
+                    result = true;
+                }
+            }
+
+            return result;
         }
     }
 }

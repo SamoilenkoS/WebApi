@@ -5,7 +5,9 @@ VisualStudioVersion = 15.0.27703.2047
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi", "WebApi\WebApi.csproj", "{027CEB09-B42C-4FB3-A261-4B484E6C0DEE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebLib", "WebLib\WebLib.csproj", "{331CF443-7127-4CC7-8E93-50C9146C7D0C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebLib", "WebLib\WebLib.csproj", "{331CF443-7127-4CC7-8E93-50C9146C7D0C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebTests", "WebTests\WebTests.csproj", "{5A0D248D-4685-4C13-8322-E79794B6B667}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{331CF443-7127-4CC7-8E93-50C9146C7D0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{331CF443-7127-4CC7-8E93-50C9146C7D0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{331CF443-7127-4CC7-8E93-50C9146C7D0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A0D248D-4685-4C13-8322-E79794B6B667}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A0D248D-4685-4C13-8322-E79794B6B667}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A0D248D-4685-4C13-8322-E79794B6B667}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A0D248D-4685-4C13-8322-E79794B6B667}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
