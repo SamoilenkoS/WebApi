@@ -43,6 +43,26 @@ namespace WebApi.Controllers
             return this.Created("books", book);
         }
 
+        [HttpPost("{bookId}/authors/{authorId}")]
+        public IActionResult AddBookAuthor(int bookId, int authorId)
+        {
+            if (this.library.AddBookAuthor(bookId, authorId))
+            {
+                return this.Ok();
+            }
+            return this.BadRequest("Book or author doesn`t exist or book already has this author!");
+        }
+
+        [HttpPost("{bookId}/genres/{genreId}")]
+        public IActionResult AddBookGenre(int bookId, int genreId)
+        {
+            if (this.library.AddBookGenre(bookId, genreId))
+            {
+                return this.Ok();
+            }
+            return this.BadRequest("Book or genre doesn`t exist or book already has this genre");
+        }
+
         /// <summary>
         /// Getting all books method
         /// </summary>
@@ -50,15 +70,7 @@ namespace WebApi.Controllers
         [HttpGet]
         public IActionResult GetAllBooks()
         {
-            List<Book> booksList = this.library.GetAllBooks().ToList();
-            if (booksList.Count != 0)
-            {
-                return this.Ok(booksList);
-            }
-            else
-            {
-                return this.NotFound();
-            }
+            return this.Ok(this.library.GetAllBooks().ToList());
         }
 
         /// <summary>
@@ -76,6 +88,28 @@ namespace WebApi.Controllers
             }
 
             return this.Ok(resultBook);
+        }
+
+        [HttpGet("{id}/authors")]
+        public IActionResult GetBookAuthors(int id)
+        {
+            List<Author> authors = this.library.GetBookAuthors(id);
+            if(authors!=null && authors.Count!=0)
+            {
+                return Ok(authors);
+            }
+            return NotFound("Book doesn`t exist or book doesn`t containts authors!");
+        }
+
+        [HttpGet("{id}/genres")]
+        public IActionResult GetBookGenres(int id)
+        {
+            List<Genre> genres = this.library.GetBookGenres(id);
+            if (genres != null && genres.Count != 0)
+            {
+                return Ok(genres);
+            }
+            return NotFound("Book doesn`t exist or book doesn`t containts authors!");
         }
 
         /// <summary>

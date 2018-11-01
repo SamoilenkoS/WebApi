@@ -10,6 +10,7 @@ namespace WebApi
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using WebApi.BookService;
+    using WebLib;
 
     /// <summary>
     /// Startup config class
@@ -37,6 +38,7 @@ namespace WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<ILibrary, LibraryList>();
+            services.AddSingleton<IDataProvider, DataProviderList>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 

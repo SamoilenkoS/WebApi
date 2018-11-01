@@ -29,12 +29,12 @@ namespace WebApi.BookService
         /// <summary>
         /// 
         /// </summary>
-        private readonly Dictionary<Book, Genre> booksGenres;
+        private readonly List<KeyValuePair<Book, Genre>> booksGenres;
 
         /// <summary>
         /// List of book->author pairs
         /// </summary>
-        private readonly Dictionary<Book, Author> booksAuthors;
+        private readonly List<KeyValuePair<Book, Author>> booksAuthors;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LibraryList"/> class
@@ -44,8 +44,8 @@ namespace WebApi.BookService
             this.authors = dataProvider.GetAuthors().ToList();
             this.books = dataProvider.GetBooks().ToList();
             this.genres = dataProvider.GetGenres().ToList();
-            this.booksGenres = dataProvider.GetBooksGenres().ToDictionary(x => x.Key, x => x.Value);
-            this.booksAuthors = dataProvider.GetBooksAuthors().ToDictionary(x => x.Key, x => x.Value);
+            this.booksGenres = dataProvider.GetBooksGenres().ToList();
+            this.booksAuthors = dataProvider.GetBooksAuthors().ToList();
         }
 
         /// <summary>
@@ -74,6 +74,42 @@ namespace WebApi.BookService
 
             this.books.Add(book);
             return book.Id;
+        }
+
+        public bool AddBookAuthor(int bookId, int authorId)
+        {
+            Author authorOfBook = this.authors.FirstOrDefault(author => author.Id == authorId);
+            Book bookToAddAuthor = this.books.FirstOrDefault(book => book.Id == bookId);
+            bool result = false;
+            if (bookToAddAuthor != null && authorOfBook != null)
+            {
+                KeyValuePair<Book, Author> bookAuthorPair = new KeyValuePair<Book, Author>(bookToAddAuthor, authorOfBook);
+                bool noteExist = booksAuthors.Contains(bookAuthorPair);
+                if(!noteExist)
+                {
+                    result = true;
+                    booksAuthors.Add(bookAuthorPair);
+                }
+            }
+            return result;
+        }
+
+        public bool AddBookGenre(int bookId, int genreId)
+        {
+            Genre genreOfBook = this.genres.FirstOrDefault(genre => genre.Id == genreId);
+            Book bookToAddGenre = this.books.FirstOrDefault(book => book.Id == bookId);
+            bool result = false;
+            if (bookToAddGenre != null && genreOfBook != null)
+            {
+                KeyValuePair<Book, Genre> bookGenrePair = new KeyValuePair<Book, Genre>(bookToAddGenre, genreOfBook);
+                bool noteExist = booksGenres.Contains(bookGenrePair);
+                if (!noteExist)
+                {
+                    result = true;
+                    booksGenres.Add(bookGenrePair);
+                }
+            }
+            return result;
         }
 
         public int AddGenre(Genre genre)
@@ -126,6 +162,19 @@ namespace WebApi.BookService
             return this.authors.FirstOrDefault(author => author.Id == id);
         }
 
+        public List<Author> GetBookAuthors(int bookId)
+        {
+            Book book = this.books.FirstOrDefault(bookToGetAuthors => bookToGetAuthors.Id == bookId);
+            List<Author> authorsOfBook = null;
+            if (book != null)
+            {
+                authorsOfBook = (from bookAuthorPair in booksAuthors
+                                              where bookAuthorPair.Key.Id == bookId
+                                              select bookAuthorPair.Value).ToList();
+            }
+            return authorsOfBook;
+        }
+
         /// <summary>
         /// Getting book by id
         /// </summary>
@@ -135,6 +184,19 @@ namespace WebApi.BookService
         {
             Book resultBook = this.books.FirstOrDefault(book => book.Id == id);
             return resultBook;
+        }
+
+        public List<Genre> GetBookGenres(int bookId)
+        {
+            Book book = this.books.FirstOrDefault(bookToGetAuthors => bookToGetAuthors.Id == bookId);
+            List<Genre> genresOfBook = null;
+            if (book != null)
+            {
+                genresOfBook = (from bookGenrePair in booksGenres
+                                 where bookGenrePair.Key.Id == bookId
+                                 select bookGenrePair.Value).ToList();
+            }
+            return genresOfBook;
         }
 
         public IEnumerable<Book> GetBooksByGenre(int genreId)
@@ -171,6 +233,7 @@ namespace WebApi.BookService
                 result = true;
                 this.authors.Remove(authorToRemove);
                 this.books.RemoveAll(book => book.AuthorId == id);
+                this.booksAuthors.RemoveAll(bookAuthorPair => bookAuthorPair.Key.AuthorId == id);
             }
 
             return result;
@@ -188,6 +251,8 @@ namespace WebApi.BookService
             if (bookToDelete != null)
             {
                 this.books.Remove(bookToDelete);
+                this.booksAuthors.RemoveAll(bookAuthorPair => bookAuthorPair.Key.Id == id);
+                this.booksGenres.RemoveAll(bookGenrePair => bookGenrePair.Key.Id == id);
                 result = true;
             }
 

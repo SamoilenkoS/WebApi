@@ -41,7 +41,7 @@ namespace WebLib
 
         public IEnumerable<KeyValuePair<Book, Genre>> GetBooksGenres()
         {
-            Dictionary<Book, Genre> booksGenre = new Dictionary<Book, Genre>()
+            List<KeyValuePair<Book, Genre>> booksGenre = new List<KeyValuePair<Book, Genre>>()
             {
 
             };
@@ -53,7 +53,7 @@ namespace WebLib
 
         public IEnumerable<KeyValuePair<Book, Author>> GetBooksAuthors()
         {
-            Dictionary<Book, Author> booksAuthor = new Dictionary<Book, Author>()
+            List<KeyValuePair<Book, Author>> booksAuthor = new List<KeyValuePair<Book, Author>>()
             {
 
             };
@@ -67,7 +67,9 @@ namespace WebLib
         {
             List<Genre> genres = new List<Genre>()
             {
-
+                new Genre("Novel"),
+                new Genre("Adventure"),
+                new Genre("Biography")
             };
             foreach (Genre genre in genres)
             {

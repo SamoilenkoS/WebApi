@@ -46,5 +46,12 @@ namespace WebApi.BookService
         /// <param name="book">Book to add</param>
         /// <returns>Book id</returns>
         int AddBook(Book book);
+
+        bool AddBookAuthor(int bookId, int authorId);
+
+        bool AddBookGenre(int bookId, int genreId);
+
+        List<Author> GetBookAuthors(int bookId);
+        List<Genre> GetBookGenres(int bookId);
     }
 }
