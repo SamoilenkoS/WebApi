@@ -13,6 +13,13 @@ namespace WebApi.BookService
     public interface IAuthor
     {
         /// <summary>
+        /// Getting author bookss
+        /// </summary>
+        /// <param name="authorId">Author id</param>
+        /// <returns>List of books of author</returns>
+        IEnumerable<Book> GetAuthorBooks(int authorId);
+
+        /// <summary>
         /// Get all Authors
         /// </summary>
         /// <returns>List of Authors</returns>

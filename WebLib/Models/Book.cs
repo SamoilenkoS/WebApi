@@ -15,26 +15,24 @@ namespace WebLib.Models
         /// <summary>
         /// Static counter for unique id creation
         /// </summary>
-        private static int idCount;
+        private static int booksCount;
 
         /// <summary>
         /// Initializes static members of the <see cref="Book"/> class
         /// </summary>
         static Book()
         {
-            idCount = 1;
+            booksCount = 1;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Book"/> class
         /// </summary>
         /// <param name="title">Title of book</param>
-        /// <param name="authorId">Author id(may be empty)</param>
-        public Book(string title, int? authorId = null)
+        public Book(string title)
         {
-            this.Id = idCount++;
+            this.Id = booksCount++;
             this.Title = title;
-            this.AuthorId = authorId;
         }
 
         /// <summary>
@@ -47,17 +45,9 @@ namespace WebLib.Models
         }
 
         /// <summary>
-        /// Gets or sets author id
-        /// </summary>
-        public int? AuthorId
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// Gets title of book
         /// </summary>
+        [Required]
         [StringLength(100, MinimumLength = 2, ErrorMessage = "Every book has title!")]
         public string Title
         {
@@ -72,7 +62,6 @@ namespace WebLib.Models
         public void Clone(Book book)
         {
             this.Title = book.Title;
-            this.AuthorId = book.AuthorId;
         }
 
         /// <summary>
@@ -86,7 +75,7 @@ namespace WebLib.Models
             if (book is Book)
             {
                 Book bookToCheckEquals = book as Book;
-                if (this.AuthorId == bookToCheckEquals.AuthorId && this.Title == bookToCheckEquals.Title)
+                if (this.Title == bookToCheckEquals.Title)
                 {
                     result = true;
                 }
@@ -95,9 +84,13 @@ namespace WebLib.Models
             return result;
         }
 
+        /// <summary>
+        /// HashCode override
+        /// </summary>
+        /// <returns>HashCode of book</returns>
         public override int GetHashCode()
         {
-            return HashCode.Combine(AuthorId, Title);
+            return this.Title.GetHashCode();
         }
     }
 }

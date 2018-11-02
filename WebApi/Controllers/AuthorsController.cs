@@ -1,4 +1,4 @@
-﻿// <copyright file="AuthorController.cs" company="My company">
+﻿// <copyright file="AuthorsController.cs" company="My company">
 //     Copyright (c) My company". All rights reserved.
 // </copyright>
 
@@ -19,7 +19,7 @@ namespace WebApi.Controllers
         /// <summary>
         /// ILibrary interface link
         /// </summary>
-        private readonly ILibrary library;
+        private readonly IAuthor library;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthorsController"/> class

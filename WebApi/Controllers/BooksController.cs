@@ -1,4 +1,4 @@
-﻿// <copyright file="BookController.cs" company="My company">
+﻿// <copyright file="BooksController.cs" company="My company">
 //     Copyright (c) My company". All rights reserved.
 // </copyright>
 
@@ -20,7 +20,7 @@ namespace WebApi.Controllers
         /// <summary>
         /// IBook interface link
         /// </summary>
-        private readonly ILibrary library;
+        private readonly IBook library;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BooksController"/> class
@@ -43,6 +43,12 @@ namespace WebApi.Controllers
             return this.Created("books", book);
         }
 
+        /// <summary>
+        /// Adding author to the book
+        /// </summary>
+        /// <param name="bookId">Book id for author add</param>
+        /// <param name="authorId">Author id for add</param>
+        /// <returns>Status of adding author</returns>
         [HttpPost("{bookId}/authors/{authorId}")]
         public IActionResult AddBookAuthor(int bookId, int authorId)
         {
@@ -50,9 +56,16 @@ namespace WebApi.Controllers
             {
                 return this.Ok();
             }
+
             return this.BadRequest("Book or author doesn`t exist or book already has this author!");
         }
 
+        /// <summary>
+        /// Adding genre to the book
+        /// </summary>
+        /// <param name="bookId">Book id for genre add</param>
+        /// <param name="genreId">Genre id for add</param>
+        /// <returns>Status of adding genre</returns>
         [HttpPost("{bookId}/genres/{genreId}")]
         public IActionResult AddBookGenre(int bookId, int genreId)
         {
@@ -60,6 +73,7 @@ namespace WebApi.Controllers
             {
                 return this.Ok();
             }
+
             return this.BadRequest("Book or genre doesn`t exist or book already has this genre");
         }
 
@@ -90,26 +104,55 @@ namespace WebApi.Controllers
             return this.Ok(resultBook);
         }
 
-        [HttpGet("{id}/authors")]
-        public IActionResult GetBookAuthors(int id)
+        /// <summary>
+        /// Getting book authors
+        /// </summary>
+        /// <param name="bookId">Book id to get authors</param>
+        /// <returns>List of authors</returns>
+        [HttpGet("{bookId}/authors")]
+        public IActionResult GetBookAuthors(int bookId)
         {
-            List<Author> authors = this.library.GetBookAuthors(id);
-            if(authors!=null && authors.Count!=0)
+            List<Author> authors = this.library.GetBookAuthors(bookId);
+            if (authors != null && authors.Count != 0)
             {
-                return Ok(authors);
+                return this.Ok(authors);
             }
-            return NotFound("Book doesn`t exist or book doesn`t containts authors!");
+
+            return this.NotFound("Book doesn`t exist or book doesn`t containts authors!");
         }
 
-        [HttpGet("{id}/genres")]
-        public IActionResult GetBookGenres(int id)
+        /// <summary>
+        /// Getting book genres
+        /// </summary>
+        /// <param name="bookId">Book id to get genres</param>
+        /// <returns>List of genres</returns>
+        [HttpGet("{bookId}/genres")]
+        public IActionResult GetBookGenres(int bookId)
         {
-            List<Genre> genres = this.library.GetBookGenres(id);
+            List<Genre> genres = this.library.GetBookGenres(bookId);
             if (genres != null && genres.Count != 0)
             {
-                return Ok(genres);
+                return this.Ok(genres);
             }
-            return NotFound("Book doesn`t exist or book doesn`t containts authors!");
+
+            return this.NotFound("Book doesn`t exist or book doesn`t containts authors!");
+        }
+
+        /// <summary>
+        /// Getting books of genre
+        /// </summary>
+        /// <param name="genreId">Genre id to get its books</param>
+        /// <returns>List of books</returns>
+        [HttpGet("{genreId}/books")]
+        public IActionResult GetBooksOfGenre(int genreId)
+        {
+            List<Book> booksOfGenre = this.library.GetBooksInGenre(genreId).ToList();
+            if (booksOfGenre.Count != 0)
+            {
+                return this.Ok(booksOfGenre);
+            }
+
+            return this.NotFound("Genre of books of genre wasn`t found!");
         }
 
         /// <summary>
@@ -125,27 +168,44 @@ namespace WebApi.Controllers
             {
                 return this.Ok(book);
             }
-            else
-            {
-                return this.NotFound();
-            }
+
+            return this.NotFound();
         }
 
         /// <summary>
-        /// Upating book author
+        /// Updating book genre (replacing one to other)
         /// </summary>
-        /// <param name="book_id">Book id</param>
-        /// <param name="author_id">Author id</param>
+        /// <param name="bookId">Book id to update it`s genre</param>
+        /// <param name="oldGenreId">Old genre id</param>
+        /// <param name="newGenreId">New genre id</param>
         /// <returns>Status of update</returns>
-        [HttpPut("{book_id}/{author_id}")]
-        public IActionResult UpdateBookAuthor(int book_id, int author_id)
+        [HttpPut("{bookId}/genres/{oldGenreId}/{newGenreId}")]
+        public IActionResult UpdateBookGenre(int bookId, int oldGenreId, int newGenreId)
         {
-            if (this.library.UpdateBooksAuthor(book_id, author_id))
+            if (this.library.UpdateBookGenre(bookId, oldGenreId, newGenreId))
             {
-                return this.Ok(this.library.GetBookById(book_id));
+                return this.Ok("Selected genre of selected book successfully updated!");
             }
 
-            return this.NotFound("Book or author wasn`t found!");
+            return this.BadRequest("Genre of book not updated!");
+        }
+
+        /// <summary>
+        /// Updating book author (replacing one to other)
+        /// </summary>
+        /// <param name="bookId">Book id to update it`s author</param>
+        /// <param name="oldAuthorId">Old author id</param>
+        /// <param name="newAuthorId">New author id</param>
+        /// <returns>Status of update</returns>
+        [HttpPut("{bookId}/authors/{oldAuthorId}/{newAuthorId}")]
+        public IActionResult UpdateBookAuthor(int bookId, int oldAuthorId, int newAuthorId)
+        {
+            if (this.library.UpdateBookAuthor(bookId, oldAuthorId, newAuthorId))
+            {
+                return this.Ok("Selected author of selected book successfully updated!");
+            }
+
+            return this.BadRequest("Author of book not updated!");
         }
 
         /// <summary>
@@ -156,14 +216,46 @@ namespace WebApi.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            if (this.library.RemoveBook(id))
+            if (this.library.DeleteBook(id))
             {
                 return this.Ok();
             }
-            else
+
+            return this.BadRequest("There is no book with such id!");
+        }
+
+        /// <summary>
+        /// Deleting book author
+        /// </summary>
+        /// <param name="bookId">Book id to remove author</param>
+        /// <param name="authorId">Author id to remove</param>
+        /// <returns>Status of author removing</returns>
+        [HttpDelete("{bookId}/authors/{authorId}")]
+        public IActionResult DeleteBookAuthor(int bookId, int authorId)
+        {
+            if (this.library.DeleteBookAuthor(bookId, authorId))
             {
-                return this.BadRequest("There is no book with such id!");
+                return this.Ok("Selected author of selected book successfully removed");
             }
+
+            return this.BadRequest("Author of book not removed");
+        }
+
+        /// <summary>
+        /// Delete book genre
+        /// </summary>
+        /// <param name="bookId">Book id to remove genre</param>
+        /// <param name="genreId">Genre id to remove</param>
+        /// <returns>Status of genre removing</returns>
+        [HttpDelete("{bookId}/genres/{genreId}")]
+        public IActionResult DeleteBookGenre(int bookId, int genreId)
+        {
+            if (this.library.DeleteBookGenre(bookId, genreId))
+            {
+                return this.Ok("Selected genre of selected book successfully removed");
+            }
+
+            return this.BadRequest("Genre of book not removed");
         }
     }
 }

@@ -15,14 +15,14 @@ namespace WebLib.Models
         /// <summary>
         /// Authors static counter for make each author unique
         /// </summary>
-        private static int authorIDCount;
+        private static int authorsCount;
 
         /// <summary>
         /// Initializes static members of the <see cref="Author"/> class
         /// </summary>
         static Author()
         {
-            authorIDCount = 1;
+            authorsCount = 1;
         }
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace WebLib.Models
             this.Surname = surname;
             this.Name = name;
             this.Patronymic = patronymic;
-            this.Id = authorIDCount++;
+            this.Id = authorsCount++;
         }
 
         /// <summary>
@@ -51,6 +51,7 @@ namespace WebLib.Models
         /// <summary>
         /// Gets surname of author
         /// </summary>
+        [Required]
         [StringLength(100, MinimumLength = 1, ErrorMessage = "Every author has surname name!")]
         public string Surname
         {
@@ -61,6 +62,7 @@ namespace WebLib.Models
         /// <summary>
         /// Gets name of author
         /// </summary>
+        [Required]
         [StringLength(100, MinimumLength = 1, ErrorMessage = "Every author has name!")]
         public string Name
         {
@@ -108,9 +110,13 @@ namespace WebLib.Models
             return result;
         }
 
+        /// <summary>
+        /// HashCode override
+        /// </summary>
+        /// <returns>Authors hash-code</returns>
         public override int GetHashCode()
         {
-            return HashCode.Combine(Surname, Name, Patronymic);
+            return HashCode.Combine(this.Surname, this.Name, this.Patronymic);
         }
     }
 }
