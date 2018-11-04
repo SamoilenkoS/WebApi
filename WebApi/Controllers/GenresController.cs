@@ -19,15 +19,15 @@ namespace WebApi.Controllers
         /// <summary>
         /// IBook interface link
         /// </summary>
-        private readonly IGenre library;
+        private readonly IGenre genresService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GenresController"/> class
         /// </summary>
-        /// <param name="library">IBook interface link</param>
-        public GenresController(ILibrary library)
+        /// <param name="genresService">IBook interface link</param>
+        public GenresController(ILibrary genresService)
         {
-            this.library = library;
+            this.genresService = genresService;
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace WebApi.Controllers
         [HttpPost]
         public IActionResult AddGenre(Genre genre)
         {
-            this.library.AddGenre(genre);
+            this.genresService.AddGenre(genre);
             return this.Created("genres", genre);
         }
 
@@ -49,7 +49,7 @@ namespace WebApi.Controllers
         [HttpGet]
         public IActionResult GetAllGenres()
         {
-            return this.Ok(this.library.GetAllGenres().ToList());
+            return this.Ok(this.genresService.GetAllGenres().ToList());
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace WebApi.Controllers
         [HttpGet("{genreId}")]
         public IActionResult GetGenreById(int genreId)
         {
-            Genre genreWithId = this.library.GetGenreById(genreId);
+            Genre genreWithId = this.genresService.GetGenreById(genreId);
             if (genreWithId != null)
             {
                 return this.Ok(genreWithId);
@@ -77,7 +77,7 @@ namespace WebApi.Controllers
         [HttpDelete("{genreId}")]
         public IActionResult RemoveGenre(int genreId)
         {
-            if (this.library.DelteGenre(genreId))
+            if (this.genresService.DelteGenre(genreId))
             {
                 return this.Ok("Genre removed");
             }

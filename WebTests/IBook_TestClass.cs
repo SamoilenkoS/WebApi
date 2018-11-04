@@ -72,7 +72,7 @@ namespace WebTests
             int testBookId = this.booksObject.AddBook(testBook);
             List<int> authorsToAddIds = new List<int>() { 1, 2 };
             ILibrary library = this.booksObject as ILibrary;
-            List<Author> expectedAuthors = (from author in library.GetAllAuthors()
+            List<Author> expectedAuthors = (from author in library.GetAuthors()
                                     where authorsToAddIds.Contains(author.Id)
                                     select author).ToList();
             
@@ -82,10 +82,10 @@ namespace WebTests
                 this.booksObject.AddBookAuthor(testBookId, authorIdToAdd);
             }
 
-            List<Author> actualAuthors = this.booksObject.GetBookAuthors(testBookId);
+            IList<Author> actualAuthors = this.booksObject.GetBookAuthors(testBookId);
 
             // Assert
-            CollectionAssert.AreEqual(expectedAuthors, actualAuthors);
+            CollectionAssert.AreEqual(expectedAuthors.ToList(), actualAuthors.ToList());
         }
 
         /// <summary>
@@ -97,8 +97,8 @@ namespace WebTests
             // Arrange
             Book testBook = new Book("Test book");
             int testBookId = this.booksObject.AddBook(testBook);
-            List<int> genresToAddIds = new List<int>() { 0, 1 };
-            List<Genre> expectedGenres = (from genre in DataProvider.GetGenres()
+            IList<int> genresToAddIds = new List<int>() { 0, 1 };
+            IList<Genre> expectedGenres = (from genre in DataProvider.GetGenres()
                                             where genresToAddIds.Contains(genre.Id)
                                             select genre).ToList();
 
@@ -108,10 +108,10 @@ namespace WebTests
                 this.booksObject.AddBookGenre(testBookId, genreId);
             }
 
-            List<Genre> actualGenres = this.booksObject.GetBookGenres(testBookId);
+            IList<Genre> actualGenres = this.booksObject.GetBookGenres(testBookId);
 
             // Assert
-            CollectionAssert.AreEqual(expectedGenres, actualGenres);
+            CollectionAssert.AreEqual(expectedGenres.ToList(), actualGenres.ToList());
         }
 
         /// <summary>
@@ -209,7 +209,7 @@ namespace WebTests
             Book book = new Book("Test");
             int bookId = this.booksObject.AddBook(book);
             this.booksObject.AddBookGenre(bookId, oldBookGenre);
-            List<Genre> bookGenres = this.booksObject.GetBookGenres(bookId);
+            IList<Genre> bookGenres = this.booksObject.GetBookGenres(bookId);
             Assert.AreEqual(1, bookGenres.Count); // only 1 genre added
             Assert.AreEqual(oldBookGenre, bookGenres[0].Id); // only old book genre added
 
@@ -230,13 +230,13 @@ namespace WebTests
         {
             // Arrange
             ILibrary library = this.booksObject as ILibrary;
-            List<Author> allAuthors = library.GetAllAuthors().ToList();
+            List<Author> allAuthors = library.GetAuthors().ToList();
             int oldBookAuthor = allAuthors[0].Id;
             int newBookAuthor = allAuthors[1].Id;
             Book book = new Book("Test");
             int bookId = this.booksObject.AddBook(book);
             this.booksObject.AddBookAuthor(bookId, oldBookAuthor);
-            List<Author> bookAuthors = this.booksObject.GetBookAuthors(bookId);
+            IList<Author> bookAuthors = this.booksObject.GetBookAuthors(bookId);
 
             // Act
             this.booksObject.UpdateBookAuthor(bookId, oldBookAuthor, newBookAuthor);
@@ -275,7 +275,7 @@ namespace WebTests
             Book book = new Book("Test");
             int bookId = this.booksObject.AddBook(book);
             this.booksObject.AddBookAuthor(bookId, bookAuthorId);
-            List<Author> bookAuthors = this.booksObject.GetBookAuthors(bookId);
+            IList<Author> bookAuthors = this.booksObject.GetBookAuthors(bookId);
 
             // Act
             this.booksObject.DeleteBookAuthor(bookId, bookAuthorId);
@@ -296,7 +296,7 @@ namespace WebTests
             Book book = new Book("Test");
             int bookId = this.booksObject.AddBook(book);
             this.booksObject.AddBookGenre(bookId, bookGenreId);
-            List<Genre> bookGenres = this.booksObject.GetBookGenres(bookId);
+            IList<Genre> bookGenres = this.booksObject.GetBookGenres(bookId);
 
             // Act
             this.booksObject.DeleteBookGenre(bookId, bookGenreId);

@@ -23,14 +23,23 @@ namespace WebApi.BookService
         /// Get all Authors
         /// </summary>
         /// <returns>List of Authors</returns>
-        IEnumerable<Author> GetAllAuthors();
+        IEnumerable<Author> GetAuthors();
 
         /// <summary>
         /// Getting Author by id
         /// </summary>
         /// <param name="id">Author id</param>
         /// <returns>Author instance</returns>
-        Author GetAuthorById(int id);
+        Author GetAuthor(int id);
+
+        /// <summary>
+        /// Getting author by full name
+        /// </summary>
+        /// <param name="surname">Author surname</param>
+        /// <param name="name">Author name</param>
+        /// <param name="patronymic">Author patronymic</param>
+        /// <returns></returns>
+        Author GetAuthor(string surname, string name, string patronymic);
 
         /// <summary>
         /// Update Author

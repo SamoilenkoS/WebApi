@@ -20,15 +20,15 @@ namespace WebApi.Controllers
         /// <summary>
         /// IBook interface link
         /// </summary>
-        private readonly IBook library;
+        private readonly IBook bookService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BooksController"/> class
         /// </summary>
-        /// <param name="library">IBook interface link</param>
-        public BooksController(ILibrary library)
+        /// <param name="bookService">IBook interface link</param>
+        public BooksController(ILibrary bookService)
         {
-            this.library = library;
+            this.bookService = bookService;
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace WebApi.Controllers
         [HttpPost]
         public IActionResult AddBook([FromBody] Book book)
         {
-            this.library.AddBook(book);
+            this.bookService.AddBook(book);
             return this.Created("books", book);
         }
 
@@ -52,7 +52,7 @@ namespace WebApi.Controllers
         [HttpPost("{bookId}/authors/{authorId}")]
         public IActionResult AddBookAuthor(int bookId, int authorId)
         {
-            if (this.library.AddBookAuthor(bookId, authorId))
+            if (this.bookService.AddBookAuthor(bookId, authorId))
             {
                 return this.Ok();
             }
@@ -69,7 +69,7 @@ namespace WebApi.Controllers
         [HttpPost("{bookId}/genres/{genreId}")]
         public IActionResult AddBookGenre(int bookId, int genreId)
         {
-            if (this.library.AddBookGenre(bookId, genreId))
+            if (this.bookService.AddBookGenre(bookId, genreId))
             {
                 return this.Ok();
             }
@@ -84,7 +84,7 @@ namespace WebApi.Controllers
         [HttpGet]
         public IActionResult GetAllBooks()
         {
-            return this.Ok(this.library.GetAllBooks().ToList());
+            return this.Ok(this.bookService.GetAllBooks().ToList());
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace WebApi.Controllers
         [HttpGet("{id}")]
         public IActionResult GetBookById(int id)
         {
-            Book resultBook = this.library.GetBookById(id);
+            Book resultBook = this.bookService.GetBookById(id);
             if (resultBook == null)
             {
                 return this.NotFound();
@@ -112,7 +112,7 @@ namespace WebApi.Controllers
         [HttpGet("{bookId}/authors")]
         public IActionResult GetBookAuthors(int bookId)
         {
-            List<Author> authors = this.library.GetBookAuthors(bookId);
+            IList<Author> authors = this.bookService.GetBookAuthors(bookId);
             if (authors != null && authors.Count != 0)
             {
                 return this.Ok(authors);
@@ -129,7 +129,7 @@ namespace WebApi.Controllers
         [HttpGet("{bookId}/genres")]
         public IActionResult GetBookGenres(int bookId)
         {
-            List<Genre> genres = this.library.GetBookGenres(bookId);
+            IList<Genre> genres = this.bookService.GetBookGenres(bookId);
             if (genres != null && genres.Count != 0)
             {
                 return this.Ok(genres);
@@ -144,9 +144,9 @@ namespace WebApi.Controllers
         /// <param name="genreId">Genre id to get its books</param>
         /// <returns>List of books</returns>
         [HttpGet("{genreId}/books")]
-        public IActionResult GetBooksOfGenre(int genreId)
+        public IActionResult GetBooksInGenre(int genreId)
         {
-            List<Book> booksOfGenre = this.library.GetBooksInGenre(genreId).ToList();
+            List<Book> booksOfGenre = this.bookService.GetBooksInGenre(genreId).ToList();
             if (booksOfGenre.Count != 0)
             {
                 return this.Ok(booksOfGenre);
@@ -164,7 +164,7 @@ namespace WebApi.Controllers
         [HttpPut("{id}")]
         public IActionResult UpdateBook(int id, [FromBody] Book book)
         {
-            if (this.library.UpdateBook(id, book))
+            if (this.bookService.UpdateBook(id, book))
             {
                 return this.Ok(book);
             }
@@ -182,7 +182,7 @@ namespace WebApi.Controllers
         [HttpPut("{bookId}/genres/{oldGenreId}/{newGenreId}")]
         public IActionResult UpdateBookGenre(int bookId, int oldGenreId, int newGenreId)
         {
-            if (this.library.UpdateBookGenre(bookId, oldGenreId, newGenreId))
+            if (this.bookService.UpdateBookGenre(bookId, oldGenreId, newGenreId))
             {
                 return this.Ok("Selected genre of selected book successfully updated!");
             }
@@ -200,7 +200,7 @@ namespace WebApi.Controllers
         [HttpPut("{bookId}/authors/{oldAuthorId}/{newAuthorId}")]
         public IActionResult UpdateBookAuthor(int bookId, int oldAuthorId, int newAuthorId)
         {
-            if (this.library.UpdateBookAuthor(bookId, oldAuthorId, newAuthorId))
+            if (this.bookService.UpdateBookAuthor(bookId, oldAuthorId, newAuthorId))
             {
                 return this.Ok("Selected author of selected book successfully updated!");
             }
@@ -216,7 +216,7 @@ namespace WebApi.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            if (this.library.DeleteBook(id))
+            if (this.bookService.DeleteBook(id))
             {
                 return this.Ok();
             }
@@ -233,7 +233,7 @@ namespace WebApi.Controllers
         [HttpDelete("{bookId}/authors/{authorId}")]
         public IActionResult DeleteBookAuthor(int bookId, int authorId)
         {
-            if (this.library.DeleteBookAuthor(bookId, authorId))
+            if (this.bookService.DeleteBookAuthor(bookId, authorId))
             {
                 return this.Ok("Selected author of selected book successfully removed");
             }
@@ -250,7 +250,7 @@ namespace WebApi.Controllers
         [HttpDelete("{bookId}/genres/{genreId}")]
         public IActionResult DeleteBookGenre(int bookId, int genreId)
         {
-            if (this.library.DeleteBookGenre(bookId, genreId))
+            if (this.bookService.DeleteBookGenre(bookId, genreId))
             {
                 return this.Ok("Selected genre of selected book successfully removed");
             }

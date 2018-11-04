@@ -53,21 +53,21 @@ namespace WebApi.BookService
         /// </summary>
         /// <param name="genreId">Genre id to get its books</param>
         /// <returns>List of books</returns>
-        IEnumerable<Book> GetBooksInGenre(int genreId);
+        IList<Book> GetBooksInGenre(int genreId);
 
         /// <summary>
         /// Getting book authors
         /// </summary>
         /// <param name="bookId">Book id to get authors</param>
         /// <returns>List of authors</returns>
-        List<Author> GetBookAuthors(int bookId);
+        IList<Author> GetBookAuthors(int bookId);
 
         /// <summary>
         /// Getting book genres
         /// </summary>
         /// <param name="bookId">Book id to get genres</param>
         /// <returns>List of genres</returns>
-        List<Genre> GetBookGenres(int bookId);
+        IList<Genre> GetBookGenres(int bookId);
 
         /// <summary>
         /// Update book

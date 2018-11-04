@@ -55,7 +55,7 @@ namespace WebTests
 
             // Act
             int authorId = this.authorsObject.AddAuthor(expected);
-            Author actual = this.authorsObject.GetAuthorById(authorId);
+            Author actual = this.authorsObject.GetAuthor(authorId);
 
             // Assert
             Assert.AreEqual(expected, actual);
@@ -71,7 +71,7 @@ namespace WebTests
             List<Author> expected = this.GetDefaultAuthorsList();
 
             // Act
-            List<Author> actual = this.authorsObject.GetAllAuthors().ToList();
+            List<Author> actual = this.authorsObject.GetAuthors().ToList();
 
             // Assert
             CollectionAssert.AreEqual(expected, actual);
@@ -88,7 +88,7 @@ namespace WebTests
             int authorId = this.authorsObject.AddAuthor(expected);
 
             // Act
-            Author actual = this.authorsObject.GetAuthorById(authorId);
+            Author actual = this.authorsObject.GetAuthor(authorId);
 
             // Assert
             Assert.AreEqual(expected, actual);
@@ -103,7 +103,7 @@ namespace WebTests
         public void GetById_Incorrect(int authorId)
         {
             // Act
-            Author actual = this.authorsObject.GetAuthorById(authorId);
+            Author actual = this.authorsObject.GetAuthor(authorId);
 
             // Assert
             Assert.AreEqual(null, actual);
@@ -124,7 +124,7 @@ namespace WebTests
             this.authorsObject.UpdateAuthor(idForUpdate, authorForUpdate);
 
             // Assert
-            Assert.AreEqual(authorForUpdate, this.authorsObject.GetAuthorById(idForUpdate));
+            Assert.AreEqual(authorForUpdate, this.authorsObject.GetAuthor(idForUpdate));
         }
 
         /// <summary>
@@ -156,7 +156,7 @@ namespace WebTests
             this.authorsObject.RemoveAuthor(idForDelete);
 
             // Assert
-            Assert.AreEqual(null, this.authorsObject.GetAuthorById(idForDelete));
+            Assert.AreEqual(null, this.authorsObject.GetAuthor(idForDelete));
         }
 
         /// <summary>

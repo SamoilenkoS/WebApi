@@ -139,7 +139,7 @@ namespace WebApi.BookService
         /// Getting all authors
         /// </summary>
         /// <returns>IEnumerable of authors</returns>
-        public IEnumerable<Author> GetAllAuthors()
+        public IEnumerable<Author> GetAuthors()
         {
             return this.authors;
         }
@@ -170,8 +170,8 @@ namespace WebApi.BookService
         public IEnumerable<Book> GetAuthorBooks(int authorId)
         {
             IEnumerable<int> booksIds = from bookAuthorPair in this.booksAuthors
-                                  where bookAuthorPair.Value == authorId
-                                  select bookAuthorPair.Key;
+                                        where bookAuthorPair.Value == authorId
+                                        select bookAuthorPair.Key;
             IEnumerable<Book> authorBooks = from book in this.books
                                             where !booksIds.Contains(book.Id)
                                             select book;
@@ -183,9 +183,24 @@ namespace WebApi.BookService
         /// </summary>
         /// <param name="id">Id of author</param>
         /// <returns>Author object</returns>
-        public Author GetAuthorById(int id)
+        public Author GetAuthor(int id)
         {
             return this.authors.FirstOrDefault(author => author.Id == id);
+        }
+
+        /// <summary>
+        /// Getting author by full name
+        /// </summary>
+        /// <param name="surname">Author surname</param>
+        /// <param name="name">Author name</param>
+        /// <param name="patronymic">Author patronymic</param>
+        /// <returns></returns>
+        public Author GetAuthor(string surname, string name, string patronymic)
+        {
+            return this.authors.FirstOrDefault(author => 
+            author.Surname == surname && 
+            author.Name == name &&
+            author.Patronymic == patronymic);
         }
 
         /// <summary>
@@ -193,7 +208,7 @@ namespace WebApi.BookService
         /// </summary>
         /// <param name="bookId">Book id to get authors</param>
         /// <returns>List of authors</returns>
-        public List<Author> GetBookAuthors(int bookId)
+        public IList<Author> GetBookAuthors(int bookId)
         {
             Book book = this.books.FirstOrDefault(bookToGetAuthors => bookToGetAuthors.Id == bookId);
             List<Author> authorsOfBook = null;
@@ -225,7 +240,7 @@ namespace WebApi.BookService
         /// </summary>
         /// <param name="bookId">Book id to get genres</param>
         /// <returns>List of genres</returns>
-        public List<Genre> GetBookGenres(int bookId)
+        public IList<Genre> GetBookGenres(int bookId)
         {
             Book book = this.books.FirstOrDefault(bookToGetAuthors => bookToGetAuthors.Id == bookId);
             List<Genre> genresOfBook = null;
@@ -247,10 +262,10 @@ namespace WebApi.BookService
         /// </summary>
         /// <param name="genreId">Genre id to get its books</param>
         /// <returns>List of books</returns>
-        public IEnumerable<Book> GetBooksInGenre(int genreId)
+        public IList<Book> GetBooksInGenre(int genreId)
         {
             Genre genre = this.genres.FirstOrDefault(currentGenre => currentGenre.Id == genreId);
-            List<Book> booksWithGenre = null;
+            IList<Book> booksWithGenre = null;
             if (genre != null)
             {
                 IEnumerable<int> booksWithGenreIds = 
