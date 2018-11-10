@@ -7,6 +7,7 @@ namespace WebTests
     using System.Collections.Generic;
     using System.Linq;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Moq;
     using WebApi.BookService;
     using WebLib;
     using WebLib.Models;
@@ -52,10 +53,12 @@ namespace WebTests
         {
             // Arrange
             Book expected = new Book("Test book title");
+            var mockDataProvider = new Mock<IDataProvider>();
+            mockDataProvider.SetupGet(mock => mock.Books).Returns(new List<Book> { expected });
+            var libraryService = new LibraryList(mockDataProvider.Object);
 
             // Act
-            int bookId = this.booksObject.AddBook(expected);
-            Book actual = this.booksObject.GetBookById(bookId);
+            Book actual = libraryService.GetBookById(expected.Id);
 
             // Assert
             Assert.AreEqual(expected, actual);
@@ -69,10 +72,17 @@ namespace WebTests
         {
             // Arrange
             Book testBook = new Book("Test book");
-            int testBookId = this.booksObject.AddBook(testBook);
+            var mockDataProvider = new Mock<IDataProvider>();
+            mockDataProvider.SetupGet(mock => mock.Books).Returns(new List<Book> { testBook });
+            int testBookId = testBook.Id;
             List<int> authorsToAddIds = new List<int>() { 1, 2 };
-            ILibrary library = this.booksObject as ILibrary;
-            List<Author> expectedAuthors = (from author in library.GetAuthors()
+            var libraryService = new LibraryList(mockDataProvider.Object);
+            foreach (int authorId in authorsToAddIds)
+            {
+                libraryService.AddBookAuthor(testBookId, authorId);
+            }
+           
+            List<Author> expectedAuthors = (from author in libraryService.GetAuthors()
                                     where authorsToAddIds.Contains(author.Id)
                                     select author).ToList();
             
@@ -98,7 +108,7 @@ namespace WebTests
             Book testBook = new Book("Test book");
             int testBookId = this.booksObject.AddBook(testBook);
             IList<int> genresToAddIds = new List<int>() { 0, 1 };
-            IList<Genre> expectedGenres = (from genre in DataProvider.GetGenres()
+            IList<Genre> expectedGenres = (from genre in DataProvider.Genres
                                             where genresToAddIds.Contains(genre.Id)
                                             select genre).ToList();
 
@@ -120,11 +130,22 @@ namespace WebTests
         [TestMethod]
         public void GetAllBooks()
         {
+            // Arrange
+            List<Book> expectedBooks = new List<Book>
+            {
+                new Book("A1"),
+                new Book("A2"),
+                new Book("A3")
+            };
+            var mockDataProvider = new Mock<IDataProvider>();
+            mockDataProvider.SetupGet(mock => mock.Books).Returns(expectedBooks);
+            var libraryService = new LibraryList(mockDataProvider.Object);
+
             // Act
-            List<Book> actual = this.booksObject.GetAllBooks().ToList();
+            List<Book> actualBooks = libraryService.GetAllBooks().ToList();
 
             // Assert
-            Assert.IsNotNull(actual);
+            CollectionAssert.AreEqual(expectedBooks, actualBooks);
         }
 
         /// <summary>

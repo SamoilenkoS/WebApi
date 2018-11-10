@@ -45,11 +45,11 @@ namespace WebApi.BookService
         /// <param name="dataProvider">Data for lib initialize</param>
         public LibraryList(IDataProvider dataProvider)
         {
-            this.authors = dataProvider.GetAuthors().ToList();
-            this.books = dataProvider.GetBooks().ToList();
-            this.genres = dataProvider.GetGenres().ToList();
-            this.booksGenres = dataProvider.GetBooksGenres().ToList();
-            this.booksAuthors = dataProvider.GetBooksAuthors().ToList();
+            this.authors = dataProvider.Authors != null ? dataProvider.Authors.ToList() : new List<Author>();
+            this.books = dataProvider.Books != null ? dataProvider.Books.ToList() : new List<Book>();
+            this.genres = dataProvider.Genres != null ? dataProvider.Genres.ToList() : new List<Genre>();
+            this.booksGenres = dataProvider.BooksGenres != null ? dataProvider.BooksGenres.ToList() : new List<KeyValuePair<int, int>>();
+            this.booksAuthors = dataProvider.BooksAuthors != null ? dataProvider.BooksAuthors.ToList() : new List<KeyValuePair<int, int>>();
         }
 
         /// <summary>

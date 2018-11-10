@@ -16,30 +16,45 @@ namespace WebLib
         /// Getting books IEnumerable
         /// </summary>
         /// <returns>IEnumerable of Book</returns>
-        IEnumerable<Book> GetBooks();
+        List<Book> Books
+        {
+            get;
+        }
 
         /// <summary>
         /// Getting authors IEnumerable
         /// </summary>
         /// <returns>IEnumerable of authors</returns>
-        IEnumerable<Author> GetAuthors();
+        List<Author> Authors
+        {
+            get;
+        }
 
         /// <summary>
         /// Getting genres IEnumerable
         /// </summary>
         /// <returns>IEnumerable of genres</returns>
-        IEnumerable<Genre> GetGenres();
+        List<Genre> Genres
+        {
+            get;
+        }
 
         /// <summary>
         /// Getting books-genres pairs IEnumerable
         /// </summary>
         /// <returns>IEnumerable of books-genres pairs</returns>
-        IEnumerable<KeyValuePair<int, int>> GetBooksGenres();
+        List<KeyValuePair<int, int>> BooksGenres
+        {
+            get;
+        }
 
         /// <summary>
         /// Getting books-authors pairs IEnumerable
         /// </summary>
         /// <returns>IEnumerable of books-authors pairs</returns>
-        IEnumerable<KeyValuePair<int, int>> GetBooksAuthors();
+        List<KeyValuePair<int, int>> BooksAuthors
+        {
+            get;
+        }
     }
 }
