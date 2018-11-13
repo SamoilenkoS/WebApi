@@ -5,7 +5,7 @@
 namespace WebApi.BookService
 {
     using System.Collections.Generic;
-    using WebApi.Models;
+    using WebLib.Models;
 
     /// <summary>
     /// CRUD methods for author
@@ -13,17 +13,33 @@ namespace WebApi.BookService
     public interface IAuthor
     {
         /// <summary>
+        /// Getting author bookss
+        /// </summary>
+        /// <param name="authorId">Author id</param>
+        /// <returns>List of books of author</returns>
+        IEnumerable<Book> GetAuthorBooks(int authorId);
+
+        /// <summary>
         /// Get all Authors
         /// </summary>
         /// <returns>List of Authors</returns>
-        IEnumerable<Author> GetAllAuthors();
+        IEnumerable<Author> GetAuthors();
 
         /// <summary>
         /// Getting Author by id
         /// </summary>
         /// <param name="id">Author id</param>
         /// <returns>Author instance</returns>
-        Author GetAuthorById(int id);
+        Author GetAuthor(int id);
+
+        /// <summary>
+        /// Getting author by full name
+        /// </summary>
+        /// <param name="surname">Author surname</param>
+        /// <param name="name">Author name</param>
+        /// <param name="patronymic">Author patronymic</param>
+        /// <returns></returns>
+        Author GetAuthor(string surname, string name, string patronymic);
 
         /// <summary>
         /// Update Author

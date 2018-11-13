@@ -2,7 +2,7 @@
 //     Copyright (c) My company". All rights reserved.
 // </copyright>
 
-namespace WebApi.Models
+namespace WebLib.Models
 {
     using System;
     using System.ComponentModel.DataAnnotations;
@@ -15,14 +15,14 @@ namespace WebApi.Models
         /// <summary>
         /// Authors static counter for make each author unique
         /// </summary>
-        private static int authorIDCount;
+        private static int authorsCount;
 
         /// <summary>
         /// Initializes static members of the <see cref="Author"/> class
         /// </summary>
         static Author()
         {
-            authorIDCount = 1;
+            authorsCount = 1;
         }
 
         /// <summary>
@@ -36,13 +36,13 @@ namespace WebApi.Models
             this.Surname = surname;
             this.Name = name;
             this.Patronymic = patronymic;
-            this.AuthorID = authorIDCount++;
+            this.Id = authorsCount++;
         }
 
         /// <summary>
         /// Gets author id
         /// </summary>
-        public int AuthorID
+        public int Id
         {
             get;
             private set;
@@ -51,7 +51,8 @@ namespace WebApi.Models
         /// <summary>
         /// Gets surname of author
         /// </summary>
-        [Required(ErrorMessage = "Every author has surname name!")]
+        [Required]
+        [StringLength(100, MinimumLength = 1, ErrorMessage = "Every author has surname name!")]
         public string Surname
         {
             get;
@@ -61,7 +62,8 @@ namespace WebApi.Models
         /// <summary>
         /// Gets name of author
         /// </summary>
-        [Required(ErrorMessage = "Every author has name!")]
+        [Required]
+        [StringLength(100, MinimumLength = 1, ErrorMessage = "Every author has name!")]
         public string Name
         {
             get;
@@ -108,9 +110,13 @@ namespace WebApi.Models
             return result;
         }
 
+        /// <summary>
+        /// HashCode override
+        /// </summary>
+        /// <returns>Authors hash-code</returns>
         public override int GetHashCode()
         {
-            return HashCode.Combine(Surname, Name, Patronymic);
+            return HashCode.Combine(this.Surname, this.Name, this.Patronymic);
         }
     }
 }

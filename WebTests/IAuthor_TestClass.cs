@@ -8,8 +8,8 @@ namespace WebTests
     using System.Linq;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using WebApi.BookService;
-    using WebApi.Models;
     using WebLib;
+    using WebLib.Models;
 
     /// <summary>
     /// IAuthor test class
@@ -18,23 +18,30 @@ namespace WebTests
     public class IAuthor_TestClass
     {
         /// <summary>
+        /// Data provider object
+        /// </summary>
+        private static readonly IDataProvider DataProvider; // stylecop thinks, that it must be with upper case
+
+        /// <summary>
         /// IAuthor object
         /// </summary>
         private IAuthor authorsObject;
 
-        private static IDataProvider dataProvider;
-
+        /// <summary>
+        /// Initializes static members of the <see cref="IAuthor_TestClass"/> class
+        /// </summary>
         static IAuthor_TestClass()
         {
-            dataProvider = new DataProviderList();
+            DataProvider = new DataProviderList();
         }
+
         /// <summary>
         /// Test initialize method
         /// </summary>
         [TestInitialize]
         public void TestClassInitialize()
         {
-            this.authorsObject = new LibraryList(dataProvider);
+            this.authorsObject = new LibraryList(DataProvider);
         }
 
         /// <summary>
@@ -48,7 +55,7 @@ namespace WebTests
 
             // Act
             int authorId = this.authorsObject.AddAuthor(expected);
-            Author actual = this.authorsObject.GetAuthorById(authorId);
+            Author actual = this.authorsObject.GetAuthor(authorId);
 
             // Assert
             Assert.AreEqual(expected, actual);
@@ -64,7 +71,7 @@ namespace WebTests
             List<Author> expected = this.GetDefaultAuthorsList();
 
             // Act
-            List<Author> actual = this.authorsObject.GetAllAuthors().ToList();
+            List<Author> actual = this.authorsObject.GetAuthors().ToList();
 
             // Assert
             CollectionAssert.AreEqual(expected, actual);
@@ -77,11 +84,11 @@ namespace WebTests
         public void GetById_Correct()
         {
             // Arrange
-            int authorId = 1;
-            Author expected = new Author("SurnameA", "NameA", "PatronymicA");
+            Author expected = new Author("Test", "Test", "Test");
+            int authorId = this.authorsObject.AddAuthor(expected);
 
             // Act
-            Author actual = this.authorsObject.GetAuthorById(authorId);
+            Author actual = this.authorsObject.GetAuthor(authorId);
 
             // Assert
             Assert.AreEqual(expected, actual);
@@ -96,7 +103,7 @@ namespace WebTests
         public void GetById_Incorrect(int authorId)
         {
             // Act
-            Author actual = this.authorsObject.GetAuthorById(authorId);
+            Author actual = this.authorsObject.GetAuthor(authorId);
 
             // Assert
             Assert.AreEqual(null, actual);
@@ -109,14 +116,15 @@ namespace WebTests
         public void UpdateAuthor_IdCorrect()
         {
             // Arrange
+            Author authorForAdd = new Author("Test", "Test", "Test");
             Author authorForUpdate = new Author("Hello", "Hello", "Hello");
-            int idForUpdate = 1;
+            int idForUpdate = this.authorsObject.AddAuthor(authorForAdd);
 
             // Act
             this.authorsObject.UpdateAuthor(idForUpdate, authorForUpdate);
 
             // Assert
-            Assert.AreEqual(authorForUpdate, this.authorsObject.GetAuthorById(idForUpdate));
+            Assert.AreEqual(authorForUpdate, this.authorsObject.GetAuthor(idForUpdate));
         }
 
         /// <summary>
@@ -141,13 +149,14 @@ namespace WebTests
         public void Delete_IdCorrect()
         {
             // Arrange
-            int idForDelete = 1;
+            Author authorForAdd = new Author("Test", "Test", "Test");
+            int idForDelete = this.authorsObject.AddAuthor(authorForAdd);
 
             // Act
             this.authorsObject.RemoveAuthor(idForDelete);
 
             // Assert
-            Assert.AreEqual(null, this.authorsObject.GetAuthorById(idForDelete));
+            Assert.AreEqual(null, this.authorsObject.GetAuthor(idForDelete));
         }
 
         /// <summary>

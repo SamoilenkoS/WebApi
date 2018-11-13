@@ -1,4 +1,4 @@
-﻿// <copyright file="AuthorController.cs" company="My company">
+﻿// <copyright file="AuthorsController.cs" company="My company">
 //     Copyright (c) My company". All rights reserved.
 // </copyright>
 
@@ -7,7 +7,7 @@ namespace WebApi.Controllers
     using System.Linq;
     using Microsoft.AspNetCore.Mvc;
     using WebApi.BookService;
-    using WebApi.Models;
+    using WebLib.Models;
 
     /// <summary>
     /// Author CRUD controller
@@ -19,15 +19,15 @@ namespace WebApi.Controllers
         /// <summary>
         /// ILibrary interface link
         /// </summary>
-        private readonly ILibrary library;
+        private readonly IAuthor authorService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthorsController"/> class
         /// </summary>
-        /// <param name="library">IBook interface link</param>
-        public AuthorsController(ILibrary library)
+        /// <param name="authorService">IBook interface link</param>
+        public AuthorsController(ILibrary authorService)
         {
-            this.library = library;
+            this.authorService = authorService;
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace WebApi.Controllers
         {
             if (ModelState.IsValid)
             {
-                this.library.AddAuthor(author);
+                this.authorService.AddAuthor(author);
                 return this.Created("authors", author);
             }
 
@@ -54,7 +54,7 @@ namespace WebApi.Controllers
         [HttpGet]
         public IActionResult GetAllAuthors()
         {
-            return this.Ok(this.library.GetAllAuthors().ToList());
+            return this.Ok(this.authorService.GetAuthors().ToList());
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace WebApi.Controllers
         [HttpGet("{id}")]
         public IActionResult GetAuthorById(int id)
         {
-            Author authorToGet = this.library.GetAuthorById(id);
+            Author authorToGet = this.authorService.GetAuthor(id);
             if (authorToGet == null)
             {
                 return this.NotFound("No author with this id!");
@@ -82,13 +82,13 @@ namespace WebApi.Controllers
         [HttpGet("{id}/books")]
         public IActionResult GetBooksOfAuthor(int id)
         {
-            Author authorToGet = this.library.GetAuthorById(id);
+            Author authorToGet = this.authorService.GetAuthor(id);
             if (authorToGet == null)
             {
                 return this.NotFound("No author with this id!");
             }
 
-            return this.Ok(this.library.GetAuthorBooks(id).ToList());
+            return this.Ok(this.authorService.GetAuthorBooks(id).ToList());
         }
 
         /// <summary>
@@ -105,12 +105,12 @@ namespace WebApi.Controllers
                 return this.BadRequest("Not a valid model!");
             }
 
-            if (!this.library.UpdateAuthor(id, author))
+            if (!this.authorService.UpdateAuthor(id, author))
             {
                 return this.NotFound("No author with this id!");
             }
 
-            return this.Ok(this.library.GetAuthorById(id));
+            return this.Ok(this.authorService.GetAuthor(id));
         }
 
         /// <summary>
@@ -121,13 +121,13 @@ namespace WebApi.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteAuthor(int id)
         {
-            Author authorToDelete = this.library.GetAuthorById(id);
+            Author authorToDelete = this.authorService.GetAuthor(id);
             if (authorToDelete == null)
             {
                 return this.NotFound("No author with this id!");
             }
 
-            this.library.RemoveAuthor(id);
+            this.authorService.RemoveAuthor(id);
             return this.Ok();
         }
     }

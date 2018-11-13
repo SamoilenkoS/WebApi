@@ -7,9 +7,10 @@ namespace WebTests
     using System.Collections.Generic;
     using System.Linq;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Moq;
     using WebApi.BookService;
-    using WebApi.Models;
     using WebLib;
+    using WebLib.Models;
 
     /// <summary>
     /// IBook test class
@@ -18,188 +19,312 @@ namespace WebTests
     public class IBook_TestClass
     {
         /// <summary>
+        /// IDataProvider object
+        /// </summary>
+        private static readonly IDataProvider DataProvider;
+
+        /// <summary>
         /// IBook object
         /// </summary>
         private IBook booksObject;
-        private static IDataProvider dataProvider;
 
+        /// <summary>
+        /// Initializes static members of the <see cref="IBook_TestClass"/> class
+        /// </summary>
         static IBook_TestClass()
         {
-            dataProvider = new DataProviderList();
+            DataProvider = new DataProviderList();
         }
+
         /// <summary>
         /// Test initialize method
         /// </summary>
         [TestInitialize]
         public void TestClassInitialize()
         {
-            this.booksObject = new LibraryList(dataProvider);
+            this.booksObject = new LibraryList(DataProvider);
         }
 
         /// <summary>
         /// Add book without author method
         /// </summary>
         [TestMethod]
-        public void AddBook_WithoutAuthor()
+        public void AddBook()
         {
             // Arrange
             Book expected = new Book("Test book title");
+            var mockDataProvider = new Mock<IDataProvider>();
+            mockDataProvider.SetupGet(mock => mock.Books).Returns(new List<Book> { expected });
+            var libraryService = new LibraryList(mockDataProvider.Object);
 
             // Act
-            int bookId = this.booksObject.AddBook(expected);
-            Book actual = this.booksObject.GetBookById(bookId);
+            Book actual = libraryService.GetBookById(expected.Id);
 
             // Assert
             Assert.AreEqual(expected, actual);
         }
 
         /// <summary>
-        /// Add book with author method
+        /// Adding book author and get book authors test
         /// </summary>
         [TestMethod]
-        public void AddBook_WithAuthor()
+        public void AddBookAuthor_GetBookAuthors()
         {
             // Arrange
-            Book expected = new Book("Test book title", 0);
-
+            Book testBook = new Book("Test book");
+            var mockDataProvider = new Mock<IDataProvider>();
+            mockDataProvider.SetupGet(mock => mock.Books).Returns(new List<Book> { testBook });
+            int testBookId = testBook.Id;
+            List<int> authorsToAddIds = new List<int>() { 1, 2 };
+            var libraryService = new LibraryList(mockDataProvider.Object);
+            foreach (int authorId in authorsToAddIds)
+            {
+                libraryService.AddBookAuthor(testBookId, authorId);
+            }
+           
+            List<Author> expectedAuthors = (from author in libraryService.GetAuthors()
+                                    where authorsToAddIds.Contains(author.Id)
+                                    select author).ToList();
+            
             // Act
-            int bookId = this.booksObject.AddBook(expected);
-            Book actual = this.booksObject.GetBookById(bookId);
+            foreach (int authorIdToAdd in authorsToAddIds)
+            {
+                this.booksObject.AddBookAuthor(testBookId, authorIdToAdd);
+            }
+
+            IList<Author> actualAuthors = this.booksObject.GetBookAuthors(testBookId);
 
             // Assert
-            Assert.AreEqual(expected, actual);
+            CollectionAssert.AreEqual(expectedAuthors.ToList(), actualAuthors.ToList());
+        }
+
+        /// <summary>
+        /// Add book genre and get book genres test
+        /// </summary>
+        [TestMethod]
+        public void AddBookGenre_GetBookGenres()
+        {
+            // Arrange
+            Book testBook = new Book("Test book");
+            int testBookId = this.booksObject.AddBook(testBook);
+            IList<int> genresToAddIds = new List<int>() { 0, 1 };
+            IList<Genre> expectedGenres = (from genre in DataProvider.Genres
+                                            where genresToAddIds.Contains(genre.Id)
+                                            select genre).ToList();
+
+            // Act
+            foreach (int genreId in genresToAddIds)
+            {
+                this.booksObject.AddBookGenre(testBookId, genreId);
+            }
+
+            IList<Genre> actualGenres = this.booksObject.GetBookGenres(testBookId);
+
+            // Assert
+            CollectionAssert.AreEqual(expectedGenres.ToList(), actualGenres.ToList());
         }
 
         /// <summary>
         /// Getting all books method
         /// </summary>
         [TestMethod]
-        public void GetAll()
+        public void GetAllBooks()
         {
             // Arrange
-            List<Book> expected = this.GetDefaultBooksList();
+            List<Book> expectedBooks = new List<Book>
+            {
+                new Book("A1"),
+                new Book("A2"),
+                new Book("A3")
+            };
+            var mockDataProvider = new Mock<IDataProvider>();
+            mockDataProvider.SetupGet(mock => mock.Books).Returns(expectedBooks);
+            var libraryService = new LibraryList(mockDataProvider.Object);
 
             // Act
-            List<Book> actual = this.booksObject.GetAllBooks().ToList();
+            List<Book> actualBooks = libraryService.GetAllBooks().ToList();
 
             // Assert
-            CollectionAssert.AreEqual(expected, actual);
+            CollectionAssert.AreEqual(expectedBooks, actualBooks);
         }
 
         /// <summary>
-        /// Getting book by correct id method
+        /// Getting book by id test
         /// </summary>
         [TestMethod]
-        public void GetById_Correct()
+        public void GetBookById()
         {
             // Arrange
-            int bookId = 2;
-            int authorId = 2;
-            Book expected = new Book("Second book", authorId);
+            Book expected = new Book("Second book");
+            int expectedBookId = this.booksObject.AddBook(expected);
 
             // Act
-            Book actual = this.booksObject.GetBookById(bookId);
+            Book actual = this.booksObject.GetBookById(expectedBookId);
 
             // Assert
             Assert.AreEqual(expected, actual);
         }
 
         /// <summary>
-        /// Getting book by incorrect id method
-        /// </summary>
-        /// <param name="bookId">Book id</param>
-        [DataTestMethod]
-        [DataRow(-1)]
-        public void GetById_Incorrect(int bookId)
-        {
-            // Act
-            Book actual = this.booksObject.GetBookById(bookId);
-
-            // Assert
-            Assert.AreEqual(null, actual);
-        }
-
-        /// <summary>
-        /// Updating book by correct id method
+        /// Getting books in genre test
         /// </summary>
         [TestMethod]
-        public void UpdateBook_IdCorrect()
+        public void GetBooksInGenre()
         {
             // Arrange
-            Book bookForUpdate = new Book("New title", 1);
-            int idForUpdate = 1;
+            ILibrary library = this.booksObject as ILibrary;
+            List<Genre> genres = library.GetAllGenres().ToList();
+            int genreIdToAdd = genres[0].Id;
+            List<Book> expectedBooks = new List<Book>()
+            {
+                new Book("Test book A"),
+                 new Book("Test book B")
+            };
+            List<int> expectedBooksIds = new List<int>();
+            foreach (Book book in expectedBooks)
+            {
+                expectedBooksIds.Add(this.booksObject.AddBook(book));
+            }
+
+            foreach (int bookId in expectedBooksIds)
+            {
+                this.booksObject.AddBookGenre(bookId, genreIdToAdd);
+            }
 
             // Act
-            this.booksObject.UpdateBook(idForUpdate, bookForUpdate);
+            List<Book> actualBooks = this.booksObject.GetBooksInGenre(genreIdToAdd).ToList();
 
             // Assert
-            Assert.AreEqual(bookForUpdate, this.booksObject.GetBookById(idForUpdate));
+            CollectionAssert.AreEqual(expectedBooks, actualBooks);
         }
 
         /// <summary>
-        /// Updating book by incorrect id method
+        /// Updating book test
         /// </summary>
-        /// <param name="bookId">Book id</param>
-        [DataTestMethod]
-        [DataRow(-1)]
-        public void UpdateBook_IdIncorrect(int bookId)
+        [TestMethod]
+        public void UpdateBook()
         {
             // Arrange
-            Book bookForUpdate = new Book("New title", 1);
+            Book bookForUpdate = new Book("Test book");
+            Book expected = new Book("New book");
+            int idForUpdate = this.booksObject.AddBook(bookForUpdate);
 
             // Act
-            bool actual = this.booksObject.UpdateBook(bookId, bookForUpdate);
+            this.booksObject.UpdateBook(idForUpdate, expected);
 
             // Assert
-            Assert.IsFalse(actual);
+            Assert.AreEqual(expected, this.booksObject.GetBookById(idForUpdate));
+        }
+
+        /// <summary>
+        /// Update book genre test
+        /// </summary>
+        [TestMethod]
+        public void UpdateBookGenre()
+        {
+            // Arrange
+            ILibrary library = this.booksObject as ILibrary;
+            List<Genre> allGenres = library.GetAllGenres().ToList();
+            int oldBookGenre = allGenres[0].Id;
+            int newBookGenre = allGenres[1].Id;
+            Book book = new Book("Test");
+            int bookId = this.booksObject.AddBook(book);
+            this.booksObject.AddBookGenre(bookId, oldBookGenre);
+            IList<Genre> bookGenres = this.booksObject.GetBookGenres(bookId);
+            Assert.AreEqual(1, bookGenres.Count); // only 1 genre added
+            Assert.AreEqual(oldBookGenre, bookGenres[0].Id); // only old book genre added
+
+            // Act
+            this.booksObject.UpdateBookGenre(bookId, oldBookGenre, newBookGenre);
+            bookGenres = this.booksObject.GetBookGenres(bookId);
+
+            // Assert
+            Assert.AreEqual(1, bookGenres.Count); // count of genres is still 1
+            Assert.AreEqual(newBookGenre, bookGenres[0].Id); // only new genre exist for this book
+        }
+
+        /// <summary>
+        /// Update book author test
+        /// </summary>
+        [TestMethod]
+        public void UpdateBookAuthor()
+        {
+            // Arrange
+            ILibrary library = this.booksObject as ILibrary;
+            List<Author> allAuthors = library.GetAuthors().ToList();
+            int oldBookAuthor = allAuthors[0].Id;
+            int newBookAuthor = allAuthors[1].Id;
+            Book book = new Book("Test");
+            int bookId = this.booksObject.AddBook(book);
+            this.booksObject.AddBookAuthor(bookId, oldBookAuthor);
+            IList<Author> bookAuthors = this.booksObject.GetBookAuthors(bookId);
+
+            // Act
+            this.booksObject.UpdateBookAuthor(bookId, oldBookAuthor, newBookAuthor);
+            bookAuthors = this.booksObject.GetBookAuthors(bookId);
+
+            // Assert
+            Assert.AreEqual(1, bookAuthors.Count); // count of author is still 1
+            Assert.AreEqual(newBookAuthor, bookAuthors[0].Id); // only new author exist for this book
         }
 
         /// <summary>
         /// Deleting book by correct id method
         /// </summary>
         [TestMethod]
-        public void Delete_IdCorrect()
+        public void DeleteBook()
         {
             // Arrange
-            int idForDelete = 1;
+            Book book = new Book("Test");
+            int idForDelete = this.booksObject.AddBook(book);
 
             // Act
-            this.booksObject.RemoveBook(idForDelete);
+            this.booksObject.DeleteBook(idForDelete);
 
             // Assert
             Assert.AreEqual(null, this.booksObject.GetBookById(idForDelete));
         }
 
         /// <summary>
-        /// Deleting book by incorrect id method
+        /// Delete book author test
         /// </summary>
-        /// <param name="bookId">Book id</param>
-        [DataTestMethod]
-        [DataRow(-1)]
-        public void Delete_IdIncorrect(int bookId)
+        [TestMethod]
+        public void DeleteBookAuthor()
         {
+            // Arrange
+            int bookAuthorId = 0;
+            Book book = new Book("Test");
+            int bookId = this.booksObject.AddBook(book);
+            this.booksObject.AddBookAuthor(bookId, bookAuthorId);
+            IList<Author> bookAuthors = this.booksObject.GetBookAuthors(bookId);
+
             // Act
-            bool actual = this.booksObject.RemoveBook(bookId);
+            this.booksObject.DeleteBookAuthor(bookId, bookAuthorId);
+            bookAuthors = this.booksObject.GetBookAuthors(bookId);
 
             // Assert
-            Assert.IsFalse(actual);
+            Assert.AreEqual(0, bookAuthors.Count);
         }
 
         /// <summary>
-        /// Getting list of default books
+        /// Delte book genre test
         /// </summary>
-        /// <returns>List of books</returns>
-        private List<Book> GetDefaultBooksList()
+        [TestMethod]
+        public void DeleteBookGenre()
         {
-            return new List<Book>()
-            {
-                new Book("First book", 1),
-                new Book("Second book", 2),
-                new Book("Third book", 3),
-                new Book("Fourth book", 1),
-                new Book("Fifth book", 2),
-                new Book("Sixth book", 3)
-            };
+            // Arrange
+            int bookGenreId = 0;
+            Book book = new Book("Test");
+            int bookId = this.booksObject.AddBook(book);
+            this.booksObject.AddBookGenre(bookId, bookGenreId);
+            IList<Genre> bookGenres = this.booksObject.GetBookGenres(bookId);
+
+            // Act
+            this.booksObject.DeleteBookGenre(bookId, bookGenreId);
+            bookGenres = this.booksObject.GetBookGenres(bookId);
+
+            // Assert
+            Assert.AreEqual(0, bookGenres.Count);
         }
     }
 }
